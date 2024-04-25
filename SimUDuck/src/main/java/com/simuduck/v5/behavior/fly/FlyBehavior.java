@@ -1,5 +1,6 @@
-package com.simuduck.v4.behavior.fly;
+package com.simuduck.v5.behavior.fly;
 
 public interface FlyBehavior {
+
     void fly();
 }
