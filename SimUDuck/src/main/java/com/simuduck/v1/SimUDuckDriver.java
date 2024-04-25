@@ -1,7 +1,4 @@
-import com.simuduck.v1.Duck;
-import com.simuduck.v1.MallardDuck;
-import com.simuduck.v1.RedHeadDuck;
-import com.simuduck.v1.RubberDuck;
+package com.simuduck.v1;
 
 public class SimUDuckDriver {
 

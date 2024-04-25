@@ -1,6 +1,6 @@
-import com.simuduck.v2.*;
+package com.simuduck.v2;
 
-public class SimUDuckDriverV2 {
+public class SimUDuckDriver {
 
     public static void main(String[] args) {
 
@@ -31,5 +31,8 @@ public class SimUDuckDriverV2 {
         duck.display();
         duck.swim();
         duck.quack();
+
+        System.out.println("Maintenance Overhead as fly behavior is in parent class and it requires all subclasses " +
+                "to inherit this functionality");
     }
 }
