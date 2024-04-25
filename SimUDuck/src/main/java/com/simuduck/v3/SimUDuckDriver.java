@@ -29,9 +29,10 @@ public class SimUDuckDriver {
         decoyDuck.display();
         decoyDuck.swim();
 
-        System.out.println("We have separated out what varies from what remains same by implementing interfaces " +
-                "Flyable and Quackable. We let each class implement Flyable and Quackable interfaces to implement " +
-                "its own fly and quack methods but reusability is an issue. Because if there is a small change " +
-                "in common fly behavior, it needs to be updated in all classes. It can also be maintenance overhead");
+        System.out.println("""
+                \n
+                * We have separated out what varies from what remains same by implementing interfaces Flyable and Quackable.\s
+                * We let each class implement Flyable and Quackable interfaces to implement its own fly and quack methods but reusability is an issue.\s
+                * Because if there is a small change in common fly behavior, it needs to be updated in all classes. It can also be maintenance overhead""");
     }
 }
