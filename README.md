@@ -1,7 +1,17 @@
 # Low-Level-Design
 
-Mappings (notes vs projects)
+Topics:
 
-1)
-    * Notes: [Notes/_06_Introduction to LLD and OOD concept (First Low Level Design Pattern).pdf](https://tinyurl.com/5eu339us)
-    * Project: [Projects/SimUDuck](https://tinyurl.com/yt3j9v3f)
+1.  ### **Prerequisites**:
+   
+   * OOPS - Inheritance, Polymorphism, etc..
+   * UML Diagrams
+   * SOLID Principles
+   * Classification of Design Patterns
+   * Approach to solve real-world problems (Good to know to solve real-world problems in 3rd section - real world problems)
+
+2.  ### **Introduction to LLD and Strategy Pattern**
+    
+   * Notes
+   * Projects
+
