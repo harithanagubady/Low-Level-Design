@@ -8,7 +8,9 @@
    * UML Diagrams
    * SOLID Principles
    * Classification of Design Patterns
-   * Approach to solve real-world problems (Good to know to solve real-world problems in 3rd section - real world problems)
+   * Approach to solve real-world problems
+
+Note: Real world problems will be discussed after we go through atleast 5 important design patterns.
 
 ### 2. **[Introduction to LLD and Strategy Pattern](https://github.com/harithanagubady/Low-Level-Design/tree/1e249e5de434c64d9d9c08addca8dec4a2e6036c/_02_Introduction%20to%20LLD%20And%20Strategy%20Pattern)**
     
