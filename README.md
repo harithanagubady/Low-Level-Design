@@ -25,6 +25,10 @@ Note: Real world problems will be discussed after we go through atleast 5 import
 
 ### 3. **[Problem Statements](https://github.com/harithanagubady/Low-Level-Design/tree/main/_03_Problem_Statements)**
 
+   * parkinglot_v0
+   * tic-tac-toe
+
 ### 4. **[Projects](https://github.com/harithanagubady/Low-Level-Design/tree/main/_04_Projects)**
      
    * parkinglot_v0
+   * tic-tac-toe
