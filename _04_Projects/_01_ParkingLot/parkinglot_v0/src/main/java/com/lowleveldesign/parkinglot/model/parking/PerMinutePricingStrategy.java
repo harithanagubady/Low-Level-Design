@@ -7,7 +7,11 @@ import java.util.Map;
 
 public class PerMinutePricingStrategy implements PricingStrategy {
 
-    private final PricingStrategyType perMinuteStrategyType = PricingStrategyType.PER_MINUTE;
+    private final PricingStrategyType perMinuteStrategyType;
+
+    public PerMinutePricingStrategy() {
+        perMinuteStrategyType = PricingStrategyType.PER_MINUTE;
+    }
 
     @Override
     public double calculatePrice(ParkingTicket ticket, Map<PricingStrategyType, Double> vehiclePrices) {

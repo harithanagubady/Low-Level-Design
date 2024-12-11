@@ -5,7 +5,7 @@ import com.lowleveldesign.parkinglot.model.parking.*;
 import com.lowleveldesign.parkinglot.model.payment.CashPaymentStrategy;
 import com.lowleveldesign.parkinglot.model.payment.CreditCardPaymentStrategy;
 import com.lowleveldesign.parkinglot.model.vehicle.Car;
-import com.lowleveldesign.parkinglot.model.vehicle.MotorCycle;
+import com.lowleveldesign.parkinglot.model.vehicle.MotorBike;
 import com.lowleveldesign.parkinglot.model.vehicle.Truck;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 
@@ -164,9 +164,9 @@ public class ParkingLotApplication {
         vehicles.put("truck2", truck2);
         Vehicle truck3 = new Truck("T3");
         vehicles.put("truck3", truck3);
-        Vehicle motorBike1 = new MotorCycle("M1");
+        Vehicle motorBike1 = new MotorBike("M1");
         vehicles.put("motorBike1", motorBike1);
-        Vehicle motorBike2 = new MotorCycle("M2");
+        Vehicle motorBike2 = new MotorBike("M2");
         vehicles.put("motorBike2", motorBike2);
 
         return vehicles.get(input);

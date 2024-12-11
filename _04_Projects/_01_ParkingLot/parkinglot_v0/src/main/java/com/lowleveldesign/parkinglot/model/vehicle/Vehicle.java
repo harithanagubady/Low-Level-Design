@@ -9,10 +9,6 @@ public abstract class Vehicle {
     private String licensePlateNo;
     private final VehicleType vehicleType;
 
-    public Vehicle(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
     public Vehicle(VehicleType vehicleType, String licensePlateNo) {
         this.vehicleType = vehicleType;
         this.licensePlateNo = licensePlateNo;

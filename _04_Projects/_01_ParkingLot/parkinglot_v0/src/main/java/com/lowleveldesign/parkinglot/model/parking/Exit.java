@@ -16,6 +16,7 @@ public class Exit {
     String exitNumber;
     PricingStrategy pricingStrategy;
     PaymentStrategy paymentStrategy;
+    CostCalculation costCalculation;
 
     public Exit(String exitNumber) {
         this.exitNumber = exitNumber;
@@ -39,7 +40,7 @@ public class Exit {
         }
         ticket.setExitTime(LocalDateTime.now());
         VehicleType vehicleType = ticket.getVehicle().getVehicleType();
-        CostCalculation costCalculation = CostCalculationFactory
+        costCalculation = CostCalculationFactory
                 .generateCostCalculationObject(vehicleType, pricingStrategy);
         double amount = costCalculation.calculateCost(ticket);
         ticket.setAmount(amount);

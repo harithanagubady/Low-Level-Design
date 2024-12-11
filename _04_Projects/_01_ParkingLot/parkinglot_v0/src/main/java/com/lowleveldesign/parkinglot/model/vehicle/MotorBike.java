@@ -2,12 +2,9 @@ package com.lowleveldesign.parkinglot.model.vehicle;
 
 import com.lowleveldesign.parkinglot.model.enums.VehicleType;
 
-public class MotorCycle extends Vehicle {
-    public MotorCycle() {
-        super(VehicleType.MOTORBIKE);
-    }
+public class MotorBike extends Vehicle {
 
-    public MotorCycle (String licensePlateNumber) {
+    public MotorBike(String licensePlateNumber) {
         super(VehicleType.MOTORBIKE, licensePlateNumber);
     }
 }

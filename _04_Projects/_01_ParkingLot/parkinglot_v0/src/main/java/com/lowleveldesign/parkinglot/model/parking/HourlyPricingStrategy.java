@@ -7,7 +7,11 @@ import java.util.Map;
 
 public class HourlyPricingStrategy implements PricingStrategy {
 
-    private final PricingStrategyType hourlyStrategyType = PricingStrategyType.HOURLY;
+    private final PricingStrategyType hourlyStrategyType;
+
+    public HourlyPricingStrategy() {
+        hourlyStrategyType = PricingStrategyType.HOURLY;
+    }
 
     @Override
     public double calculatePrice(ParkingTicket ticket, Map<PricingStrategyType, Double> vehiclePrices) {
