@@ -2,7 +2,7 @@
 
 # Topics:
 
-### 1. **[Prerequisites](https://github.com/harithanagubady/Low-Level-Design/tree/main/_01_Prerequisites)**
+### 1. **[OOD Concept and Design Patterns](https://github.com/harithanagubady/Low-Level-Design/tree/main/_01_Design_Principles_and_UML)**
    
    * OOPS - Inheritance, Polymorphism, etc..
    * UML Diagrams
@@ -12,14 +12,19 @@
 
 Note: Real world problems will be discussed after we go through atleast 5 important design patterns.
 
-### 2. **[Introduction to LLD and Strategy Pattern](https://github.com/harithanagubady/Low-Level-Design/tree/main/_02_Introduction%20to%20LLD%20And%20Strategy%20Pattern)**
-    
-   * Notes
-   * Projects
-        * SimUDuck
-
-### 3. **[The Observer Pattern](https://github.com/harithanagubady/Low-Level-Design/tree/main/_03_ObserverPattern)**
+### 2. **[Design Patterns](https://github.com/harithanagubady/Low-Level-Design/tree/main/_02_Design_Patterns)**
      
-   * Notes
-   * Projects
-        * WeatherStation
+* Strategy Pattern
+  * Notes
+  * Projects
+    * SimUDuck
+* Observer Pattern
+  * Notes
+  * Projects
+    * WeatherStation
+
+### 3. **[Problem Statements](https://github.com/harithanagubady/Low-Level-Design/tree/main/_03_Problem_Statements)**
+
+### 4. **[Projects](https://github.com/harithanagubady/Low-Level-Design/tree/main/_04_Projects)**
+     
+   * parkinglot_v0
