@@ -32,3 +32,7 @@ Note: Real world problems will be discussed after we go through atleast 5 import
      
    * parkinglot_v0
    * tic-tac-toe
+
+### 5. **[Designs](https://github.com/harithanagubady/Low-Level-Design/tree/main/_05_Designs)**
+     
+   * parkinglot_v0
