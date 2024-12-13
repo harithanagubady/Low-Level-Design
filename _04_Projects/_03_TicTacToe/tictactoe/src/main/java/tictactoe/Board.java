@@ -8,8 +8,7 @@ public abstract class Board {
 
     @Getter
     public final PlayingPiece[][] board;
-    @Getter
-    public final int size;
+    protected final int size;
     private static final int MAX_CAPACITY = 5;
     private static final int DEFAULT = 3;
 
@@ -54,6 +53,9 @@ public abstract class Board {
         }
     }
 
+    public int size() {
+        return this.size;
+    }
 
     public boolean isDraw() {
         return getAvailableCells().size() == 0;

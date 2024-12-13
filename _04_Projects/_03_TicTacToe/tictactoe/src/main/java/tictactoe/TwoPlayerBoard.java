@@ -34,6 +34,7 @@ public class TwoPlayerBoard extends Board{
         return isWinner(row, col);
     }
 
+    //O(1)
     protected boolean isWinner(int row, int col) {
         return Math.abs(rowCount[row]) == size
                 || Math.abs(colCount[col]) == size
@@ -41,29 +42,29 @@ public class TwoPlayerBoard extends Board{
                 || row == col && Math.abs(diagCount) == size;
     }
 
-//      not optimal
-//    protected boolean isWinner(int row, int col, tictactoe.PlayingPiece playingPiece) {
-//        boolean isRow = true, isCol = true, isDiagonal = true, isReverseDiagonal = true;
-//        for (int i = 0; i < size; i++) {
-//            if (board[row][i] != playingPiece) {
-//                isRow = false;
-//            }
-//            if (board[i][col] != playingPiece) {
-//                isCol = false;
-//            }
-//            if (row == col) {
-//                if (board[i][i] != playingPiece) {
-//                    isDiagonal = false;
-//                }
-//            }
-//            if (row == size - col - 1) {
-//                if (board[i][size - i - 1] != playingPiece) {
-//                    isReverseDiagonal = false;
-//                }
-//            }
-//        }
-//        return isRow || isCol || isDiagonal || isReverseDiagonal;
-//    }
+    //O(n)
+    protected boolean isWinnerApproach1(int row, int col, tictactoe.PlayingPiece playingPiece) {
+        boolean isRow = true, isCol = true, isDiagonal = true, isReverseDiagonal = true;
+        for (int i = 0; i < size; i++) {
+            if (board[row][i] != playingPiece) {
+                isRow = false;
+            }
+            if (board[i][col] != playingPiece) {
+                isCol = false;
+            }
+            if (row == col) {
+                if (board[i][i] != playingPiece) {
+                    isDiagonal = false;
+                }
+            }
+            if (row == size - col - 1) {
+                if (board[i][size - i - 1] != playingPiece) {
+                    isReverseDiagonal = false;
+                }
+            }
+        }
+        return isRow || isCol || isDiagonal || isReverseDiagonal;
+    }
 
     public List<Pair> getAvailableCells() {
         List<Pair> pairs = new ArrayList<>();
