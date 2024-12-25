@@ -1,0 +1,18 @@
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+DEBUG [com.mylogger.Main] DEBUG: checking debug log
+
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+DEBUG [com.mylogger.Main] DEBUG: checking debug log
+
+ERROR [com.mylogger.Main] ERROR: checking error log
+
+DEBUG [com.mylogger.Main] DEBUG: checking debug log
+
