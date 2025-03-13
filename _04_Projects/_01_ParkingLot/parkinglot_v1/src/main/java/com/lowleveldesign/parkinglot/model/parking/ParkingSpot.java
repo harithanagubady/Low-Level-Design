@@ -15,6 +15,7 @@ public abstract class ParkingSpot {
     private ParkingSpotType parkingSpotType;
     private LocationType locationType;
     private Vehicle vehicle;
+    private ParkingLevel parkingLevel;
 
     public ParkingSpot(String spotNumber, ParkingSpotType parkingSpotType) {
         this.spotNumber = spotNumber;

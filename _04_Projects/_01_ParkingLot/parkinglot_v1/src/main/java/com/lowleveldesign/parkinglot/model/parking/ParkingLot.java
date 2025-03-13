@@ -6,21 +6,15 @@ import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ParkingLot {
 
-    public static final String PARKING_SPOT_CANNOT_BE_NULL = "Parking Spot cannot be null";
-    public static final String PARKING_SPOT = "parkingSpot";
-    public static final ParkingLot INSTANCE = new ParkingLot();
+    private static final int CAPACITY = 4;
+    private static ParkingLot INSTANCE;
     private String parkingLotId;
-    private int capacity;
-    @Getter private final List<ParkingSpot> parkingSpots;
-    private final List<Entrance> entrances;
-    private final List<Exit> exits;
+    @Getter private final List<ParkingLevel> parkingLevels;
 
     public String getParkingLotId() {
         return parkingLotId;
@@ -30,20 +24,55 @@ public class ParkingLot {
         this.parkingLotId = parkingLotId;
     }
 
-    private ParkingLot() {
-        this.capacity = 10;
+    private final List<Entrance> entrances;
+    private final List<Exit> exits;
+    private final int noOfLevels;
+
+    private ParkingLot(int noOfLevels) {
         this.parkingLotId = UUID.randomUUID().toString();
-        this.parkingSpots = new ArrayList<>();
+        this.parkingLevels = new ArrayList<>();
         this.entrances = new ArrayList<>();
         this.exits = new ArrayList<>();
+        this.noOfLevels = noOfLevels;
+    }
+
+    public static ParkingLot getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ParkingLot(CAPACITY);
+        }
+        return INSTANCE;
+    }
+
+    public void addParkingSpot(ParkingSpot parkingSpot, ParkingLevel parkingLevel) {
+        if (parkingLevels.size() >= this.noOfLevels) {
+            throw new IllegalStateException("Cannot add new spot. Parking lot is at full capacity");
+        }
+        if (parkingLevel == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "parkingLevel", "parkingLevel object cannot be null");
+            throw new InvalidInputException(msg);
+        }
+        parkingLevel.addParkingSpot(parkingSpot);
     }
 
     protected ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
 
-        ParkingSpot parkingSpot = parkingStrategy.allocateParkingSpot(vehicle.getVehicleType(), parkingSpots);
-        if (parkingSpot == null) return null;
-        parkingSpot.assignParkingSpot(vehicle);
-        return parkingSpot;
+        Optional<ParkingSpot> parkingSpotOptional = parkingLevels.stream()
+                .filter(pl -> pl.canPark(vehicle.getVehicleType()))
+                .map(pl -> pl.assignParkingSpot(vehicle, parkingStrategy))
+                .filter(Objects::nonNull)
+                .findFirst();
+        return parkingSpotOptional.orElse(null);
+    }
+
+    public void addParkingLevel(ParkingLevel parkingLevel) {
+        if (parkingLevels.size() >= this.noOfLevels) {
+            throw new IllegalStateException("Cannot add new level. Parking lot is at full capacity");
+        }
+        if (parkingLevel == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "parkingLevel", "parkingLevel object cannot be null");
+            throw new InvalidInputException(msg);
+        }
+        parkingLevels.add(parkingLevel);
     }
 
     protected void vacateParkingSpot(ParkingSpot parkingSpot) {
@@ -51,42 +80,40 @@ public class ParkingLot {
     }
 
     protected boolean isLotFull() {
-        return parkingSpots.stream().noneMatch(ParkingSpot::isAvailable);
-    }
-
-    public void addParkingSpot(ParkingSpot parkingSpot) {
-        if (parkingSpots.size() >= this.capacity) {
-            throw new IllegalStateException("Cannot add new spot. Parking lot is at full capacity");
-        }
-        validateObject(parkingSpot);
-        parkingSpots.add(parkingSpot);
-    }
-
-    public void removeParkingSpot(String spotId) {
-        ParkingSpot parkingSpot = getParkingSpot(spotId);
-        validateObject(parkingSpot);
-        parkingSpots.remove(parkingSpot);
+        return parkingLevels.stream().noneMatch(ParkingLevel::isAvailable);
     }
 
     public void addEntrance(Entrance entrance) {
-        validateObject(entrance);
+        if (entrance == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "entrance", "entrance object cannot be null");
+            throw new InvalidInputException(msg);
+        }
         entrances.add(entrance);
     }
 
     public void removeEntrance(String entranceId) {
         Entrance entrance = getEntrance(entranceId);
-        validateObject(entrance);
+        if (entrance == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "entrance", "entrance object cannot be null");
+            throw new InvalidInputException(msg);
+        }
         entrances.remove(entrance);
     }
 
     public void addExit(Exit exit) {
-        validateObject(exit);
+        if (exit == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "exit", "exit object cannot be null");
+            throw new InvalidInputException(msg);
+        }
         exits.add(exit);
     }
 
     public void removeExit(String exitId) {
         Exit exit = getExit(exitId);
-        validateObject(exitId);
+        if (exit == null) {
+            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "exit", "exit object cannot be null");
+            throw new InvalidInputException(msg);
+        }
         exits.remove(exit);
     }
 
@@ -102,25 +129,9 @@ public class ParkingLot {
                 .findFirst().orElse(null);
     }
 
-    public ParkingSpot getParkingSpot(String spotId) {
-        return parkingSpots.stream()
-                .filter(parkingSpot -> StringUtils.equalsIgnoreCase(parkingSpot.getSpotNumber(), spotId))
-                .findFirst().orElse(null);
-    }
-
-
-    private static void validateObject(Object obj) {
-        if (obj == null) {
-            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, PARKING_SPOT, PARKING_SPOT_CANNOT_BE_NULL);
-            throw new InvalidInputException(msg);
-        }
-    }
-
     @Override
     public String toString() {
-        String formattedParkingSpots = parkingSpots.stream()
-                .map(ParkingSpot::toString) // Customize if needed
-                .collect(Collectors.joining(",\n", "[\n", "\n\t]"));
+
         String formattedEntrances = entrances.stream()
                 .map(Entrance::toString) // Customize if needed
                 .collect(Collectors.joining(",\n", "[\n", "\n\t]"));
@@ -129,7 +140,7 @@ public class ParkingLot {
                 .collect(Collectors.joining(",\n", "[\n", "\n\t]"));
         return "ParkingLot: {" +
                 "\n\tparkingLotId='" + parkingLotId + '\'' +
-                ",\n\tparkingSpots=" + formattedParkingSpots +
+                ",\n\tparkingLevels=" + parkingLevels +
                 ", \n\tentrances=" + formattedEntrances +
                 ", \n\texits=" + formattedExits +
                 "\n}";

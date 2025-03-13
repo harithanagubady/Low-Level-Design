@@ -26,12 +26,12 @@ public class Entrance {
     }
 
     public ParkingTicket issueTicket (Vehicle vehicle) {
-        if (ParkingLot.INSTANCE.isLotFull()) {
+        if (ParkingLot.getInstance().isLotFull()) {
             throw new ParkingLotFullException(ErrorConstants.PARKING_LOT_FULL_MSG);
         }
-        ParkingSpot parkingSpot = ParkingLot.INSTANCE.assignParkingSpot(vehicle, parkingStrategy);
+        ParkingSpot parkingSpot = ParkingLot.getInstance().assignParkingSpot(vehicle, parkingStrategy);
         if (parkingSpot == null) {
-            String msg = String.format(ErrorConstants.PARKING_LOT_UNAVAILABLE_MSG,
+            String msg = String.format(ErrorConstants.PARKING_SPOT_UNAVAILABLE_MSG,
                     vehicle.getVehicleType().name());
             throw new ParkingLotUnavailableException(msg);
         }

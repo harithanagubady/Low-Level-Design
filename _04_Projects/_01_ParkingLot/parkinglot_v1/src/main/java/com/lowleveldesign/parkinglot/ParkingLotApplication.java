@@ -9,7 +9,9 @@ import com.lowleveldesign.parkinglot.model.vehicle.MotorBike;
 import com.lowleveldesign.parkinglot.model.vehicle.Truck;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class ParkingLotApplication {
@@ -18,21 +20,27 @@ public class ParkingLotApplication {
 
         Scanner scn = new Scanner(System.in);
 
-        ParkingLot parkingLot = ParkingLot.INSTANCE;
+        ParkingLot parkingLot = ParkingLot.getInstance();
+        ParkingLevel parkingLevel1 = new ParkingLevel(10);
+        parkingLot.addParkingLevel(parkingLevel1);
 
         ParkingSpot carParkingSpot1 = new CarParkingSpot("CarSpot1");
         ParkingSpot carParkingSpot2 = new CarParkingSpot("CarSpot2", LocationType.NEAR_ENTRANCE);
         ParkingSpot largeParkingSpot1 = new LargeParkingSpot("LargeSpot1", LocationType.NEAR_LIFT);
         ParkingSpot largeParkingSpot2 = new LargeParkingSpot("LargeSpot2", LocationType.NEAR_ENTRANCE);
+
+        parkingLot.addParkingSpot(carParkingSpot1, parkingLevel1);
+        parkingLot.addParkingSpot(carParkingSpot2, parkingLevel1);
+        parkingLot.addParkingSpot(largeParkingSpot1, parkingLevel1);
+        parkingLot.addParkingSpot(largeParkingSpot2, parkingLevel1);
+
+
+        ParkingLevel parkingLevel2 = new ParkingLevel(10);
         ParkingSpot motorBikeParkingSpot1 = new MotorBikeParkingSpot("MotorBikeSpot1");
         ParkingSpot motorBikeParkingSpot2 = new MotorBikeParkingSpot("MotorBikeSpot2");
-
-        parkingLot.addParkingSpot(carParkingSpot1);
-        parkingLot.addParkingSpot(carParkingSpot2);
-        parkingLot.addParkingSpot(largeParkingSpot1);
-        parkingLot.addParkingSpot(largeParkingSpot2);
-        parkingLot.addParkingSpot(motorBikeParkingSpot1);
-        parkingLot.addParkingSpot(motorBikeParkingSpot2);
+        parkingLevel2.addParkingSpot(motorBikeParkingSpot1);
+        parkingLevel2.addParkingSpot(motorBikeParkingSpot2);
+        parkingLot.addParkingLevel(parkingLevel2);
 
         Entrance entrance = new Entrance("E1");
         parkingLot.addEntrance(entrance);
@@ -133,16 +141,6 @@ public class ParkingLotApplication {
                 }
 
                 System.out.println(parkingLot);
-                System.out.println("Available Parking Spots: ");
-                parkingLot.getParkingSpots().stream()
-                        .filter(ParkingSpot::isAvailable)
-                        .forEach(parkingSpot -> System.out.print(parkingSpot.getSpotNumber() + " "));
-                System.out.println();
-                System.out.println("Tickets: ");
-                System.out.println(tickets.values().stream()
-                        .map(ParkingTicket::toString)
-                        .collect(Collectors.joining(",\n", "[\n\t", "\n]")));
-                System.out.println();
 
             } catch (Exception ex) {
                 ex.printStackTrace();
