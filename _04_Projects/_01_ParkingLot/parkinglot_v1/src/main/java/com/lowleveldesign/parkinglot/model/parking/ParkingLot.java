@@ -4,10 +4,8 @@ import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.InvalidInputException;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ParkingLot {
 
@@ -15,6 +13,10 @@ public class ParkingLot {
     private static ParkingLot INSTANCE;
     private String parkingLotId;
     @Getter private final List<ParkingLevel> parkingLevels;
+    @Getter private final Map<String, PriorityQueue<ParkingSpot>> entranceSpots;
+    @Getter private final Map<String, PriorityQueue<ParkingSpot>> exitSpots;
+    @Getter private final Map<String, PriorityQueue<ParkingSpot>> liftSpots;
+
 
     public String getParkingLotId() {
         return parkingLotId;
@@ -24,14 +26,19 @@ public class ParkingLot {
         this.parkingLotId = parkingLotId;
     }
 
-    private final List<Entrance> entrances;
-    private final List<Exit> exits;
+    private final List<String> entranceGates;
+    private final List<String> exitGates;
+    private final List<String> lifts;
 
     private ParkingLot() {
         this.parkingLotId = UUID.randomUUID().toString();
         this.parkingLevels = new ArrayList<>();
-        this.entrances = new ArrayList<>();
-        this.exits = new ArrayList<>();
+        this.entranceGates = new ArrayList<>();
+        this.exitGates = new ArrayList<>();
+        this.lifts = new ArrayList<>();
+        this.entranceSpots = new HashMap<>();
+        this.exitSpots = new HashMap<>();
+        this.liftSpots = new HashMap<>();
     }
 
     public static ParkingLot getInstance() {
@@ -49,18 +56,18 @@ public class ParkingLot {
         parkingLevel.addParkingSpot(parkingSpot);
     }
 
-    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
+    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingPreferences preferences) {
 
         Optional<ParkingSpot> parkingSpotOptional = parkingLevels.stream()
                 .filter(pl -> pl.canPark(vehicle.getVehicleType()))
-                .map(pl -> pl.assignParkingSpot(vehicle, parkingStrategy))
+                .map(pl -> pl.assignParkingSpot(vehicle, preferences))
                 .filter(Objects::nonNull)
                 .findFirst();
         return parkingSpotOptional.orElse(null);
     }
 
     public void addParkingLevel(ParkingLevel parkingLevel) {
-        if (parkingLevels.size() >= this.LEVELS) {
+        if (parkingLevels.size() >= LEVELS) {
             throw new IllegalStateException("Cannot add new level. Parking lot is at full capacity");
         }
         if (parkingLevel == null) {
@@ -78,66 +85,41 @@ public class ParkingLot {
         return parkingLevels.stream().noneMatch(ParkingLevel::isAvailable);
     }
 
-    public void addEntrance(Entrance entrance) {
-        if (entrance == null) {
-            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "entrance", "entrance object cannot be null");
-            throw new InvalidInputException(msg);
-        }
-        entrances.add(entrance);
+    public void addEntranceGate(String entranceGateNo) {
+        entranceGates.add(entranceGateNo);
     }
 
-    public void removeEntrance(String entranceId) {
-        Entrance entrance = getEntrance(entranceId);
-        if (entrance == null) {
-            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "entrance", "entrance object cannot be null");
-            throw new InvalidInputException(msg);
-        }
-        entrances.remove(entrance);
+    public void removeEntrance(String entranceGateNo) {
+        entranceGates.remove(entranceGateNo);
     }
 
-    public void addExit(Exit exit) {
-        if (exit == null) {
-            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "exit", "exit object cannot be null");
-            throw new InvalidInputException(msg);
-        }
-        exits.add(exit);
+    public void addExit(String exitGateNo) {
+        exitGates.add(exitGateNo);
     }
 
-    public void removeExit(String exitId) {
-        Exit exit = getExit(exitId);
-        if (exit == null) {
-            String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "exit", "exit object cannot be null");
-            throw new InvalidInputException(msg);
-        }
-        exits.remove(exit);
+    public void removeExit(String exitGateNo) {
+        exitGates.remove(exitGateNo);
     }
 
-    private Exit getExit(String exitId) {
-        return exits.stream()
-                .filter(exit -> StringUtils.equalsIgnoreCase(exit.getExitNumber(), exitId))
-                .findFirst().orElse(null);
+
+    public void addLift(String liftNo) {
+        lifts.add(liftNo);
     }
 
-    private Entrance getEntrance(String entranceId) {
-        return entrances.stream()
-                .filter(entrance -> StringUtils.equalsIgnoreCase(entrance.getEntranceNumber(), entranceId))
-                .findFirst().orElse(null);
+    public void removeLift(String liftNo) {
+        lifts.remove(liftNo);
     }
 
     @Override
     public String toString() {
 
-        String formattedEntrances = entrances.stream()
-                .map(Entrance::toString) // Customize if needed
-                .collect(Collectors.joining(",\n", "[\n", "\n\t]"));
-        String formattedExits = exits.stream()
-                .map(Exit::toString) // Customize if needed
-                .collect(Collectors.joining(",\n", "[\n", "\n\t]"));
         return "ParkingLot: {" +
                 "\n\tparkingLotId='" + parkingLotId + '\'' +
                 ",\n\tparkingLevels=" + parkingLevels +
-                ", \n\tentrances=" + formattedEntrances +
-                ", \n\texits=" + formattedExits +
+                ", \n\tentrances=" + entranceGates +
+                ", \n\texits=" + exitGates +
+                ", \n\tlifts=" + lifts +
                 "\n}";
     }
+
 }

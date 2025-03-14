@@ -1,5 +1,6 @@
 package com.lowleveldesign.parkinglot.model.parking;
 
+import com.lowleveldesign.parkinglot.model.enums.LocationType;
 import com.lowleveldesign.parkinglot.model.enums.ParkingTicketStatus;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Builder;
@@ -20,10 +21,8 @@ public class ParkingTicket {
     private LocalDateTime exitTime;
     private double amount;
     ParkingTicketStatus parkingTicketStatus;
-
-    public void closeTicket() {
-        this.parkingTicketStatus = ParkingTicketStatus.PAID;
-    }
+    private String entranceNo;
+    private String exitNo;
 
     @Override
     public String toString() {
@@ -33,7 +32,6 @@ public class ParkingTicket {
                 + ", \n\t\tvehicleType: " + vehicle.getVehicleType()
                 + ", \n\t\tparkingType: " + parkingSpot.getParkingSpotType().name()
                 + ", \n\t\tparkingSpotNo: " + parkingSpot.getSpotNumber()
-                + ", \n\t\tlocationType: " + parkingSpot.getLocationType().name()
                 + ", \n\t\tentry: " + entryTime;
         if (parkingTicketStatus.equals(ParkingTicketStatus.PAID)) {
             s1 += (", \n\t\texit: " + exitTime + ", \n\t\tamount: " + amount);

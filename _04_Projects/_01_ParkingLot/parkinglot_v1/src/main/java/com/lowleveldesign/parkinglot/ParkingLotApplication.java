@@ -1,6 +1,5 @@
 package com.lowleveldesign.parkinglot;
 
-import com.lowleveldesign.parkinglot.model.enums.LocationType;
 import com.lowleveldesign.parkinglot.model.parking.*;
 import com.lowleveldesign.parkinglot.model.payment.CashPaymentStrategy;
 import com.lowleveldesign.parkinglot.model.payment.CreditCardPaymentStrategy;
@@ -12,7 +11,6 @@ import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class ParkingLotApplication {
 
@@ -24,29 +22,35 @@ public class ParkingLotApplication {
         ParkingLevel parkingLevel1 = new ParkingLevel(10);
         parkingLot.addParkingLevel(parkingLevel1);
 
-        ParkingSpot carParkingSpot1 = new CarParkingSpot("CarSpot1");
-        ParkingSpot carParkingSpot2 = new CarParkingSpot("CarSpot2", LocationType.NEAR_ENTRANCE);
-        ParkingSpot largeParkingSpot1 = new LargeParkingSpot("LargeSpot1", LocationType.NEAR_LIFT);
-        ParkingSpot largeParkingSpot2 = new LargeParkingSpot("LargeSpot2", LocationType.NEAR_ENTRANCE);
+        ParkingSpot carParkingSpot1 = new CarParkingSpot("CarSpot1", new int[]{11, 1}, new int[]{11, 2}, new int[]{12, 1});
+        ParkingSpot carParkingSpot2 = new CarParkingSpot("CarSpot2", new int[]{11, 2}, new int[]{11, 1}, new int[]{12, 2});
+        ParkingSpot largeParkingSpot1 = new LargeParkingSpot("LargeSpot1", new int[]{13, 1}, new int[]{12, 1}, new int[]{11, 1});
+        ParkingSpot largeParkingSpot2 = new LargeParkingSpot("LargeSpot2", new int[]{12, 1}, new int[]{12, 2}, new int[]{11, 2});
 
         parkingLot.addParkingSpot(carParkingSpot1, parkingLevel1);
         parkingLot.addParkingSpot(carParkingSpot2, parkingLevel1);
         parkingLot.addParkingSpot(largeParkingSpot1, parkingLevel1);
         parkingLot.addParkingSpot(largeParkingSpot2, parkingLevel1);
 
-
         ParkingLevel parkingLevel2 = new ParkingLevel(10);
         parkingLot.addParkingLevel(parkingLevel2);
-        ParkingSpot motorBikeParkingSpot1 = new MotorBikeParkingSpot("MotorBikeSpot1");
-        ParkingSpot motorBikeParkingSpot2 = new MotorBikeParkingSpot("MotorBikeSpot2");
+        ParkingSpot motorBikeParkingSpot1 = new MotorBikeParkingSpot("MotorBikeSpot1", new int[]{21, 1}, new int[]{21, 1}, new int[]{22, 1});
+        ParkingSpot motorBikeParkingSpot2 = new MotorBikeParkingSpot("MotorBikeSpot2", new int[]{21, 2}, new int[]{21, 2}, new int[]{21, 1});
         parkingLot.addParkingSpot(motorBikeParkingSpot1, parkingLevel2);
         parkingLot.addParkingSpot(motorBikeParkingSpot2, parkingLevel2);
 
-        Entrance entrance = new Entrance("E1");
-        parkingLot.addEntrance(entrance);
+        parkingLot.addEntranceGate("11");
+        parkingLot.addEntranceGate("12");
+        parkingLot.addEntranceGate("13");
+        parkingLot.addEntranceGate("21");
 
-        Exit exit = new Exit("Ex1");
-        parkingLot.addExit(exit);
+        parkingLot.addExit("11");
+        parkingLot.addExit("12");
+        parkingLot.addExit("21");
+
+        parkingLot.addLift("11");
+        parkingLot.addLift("12");
+        parkingLot.addLift("21");
 
         System.out.println(parkingLot);
         Map<String, ParkingTicket> tickets = new HashMap<>();
@@ -54,22 +58,24 @@ public class ParkingLotApplication {
         /*
         Commands:
         issueTicket car1
-        setParkingStrategy NearEntrance
+        setParkingStrategy NearEntrance 11
         issueTicket car2
-        setParkingStrategy NearLift
+        setParkingStrategy NearLift 12
         issueTicket motorBike1//Unavailable
-        setParkingStrategy Default
-        issueTicket motorBike1
+        setParkingStrategy Default -1
         issueTicket motorBike2
         issueTicket truck1
-        setParkingStrategy NearEntrance
+        setParkingStrategy NearEntrance 12
         issueTicket truck2
         issueTicket car3//Full
-        scanAndVacate bfaeef78-a762-46f2-bd9e-cabb3ded57de
+        scanAndVacate 7d3f945d-722c-4549-9520-5231bf3171a4
         setPricingStrategy PerMinute
         setPaymentStrategy CreditCard
-        scanAndVacate 6a4f859f-b40f-4ad4-96a1-8e8f4ded7d06
+        scanAndVacate c528ee6d-3143-4899-a7c6-f9b6cd8803ab
          */
+        Entrance entrance = new Entrance("11");
+        Exit exit = new Exit("12");
+
         while (true) {
             String input = scn.nextLine();
             input = input.trim();
@@ -101,15 +107,19 @@ public class ParkingLotApplication {
                     case "setParkingStrategy": {
 
                         inpArg[1] = inpArg[1].trim();
+                        inpArg[2] = inpArg[2].trim();
                         switch (inpArg[1]) {
                             case "NearEntrance":
-                                entrance.setParkingStrategy(new NearEntranceParkingStrategy());
+                                entrance.setParkingPreferences(new NearEntranceParkingStrategy(), inpArg[2]);
                                 break;
                             case "NearLift":
-                                entrance.setParkingStrategy(new NearLiftParkingStrategy());
+                                entrance.setParkingPreferences(new NearLiftParkingStrategy(), inpArg[2]);
+                                break;
+                            case "NearExit":
+                                entrance.setParkingPreferences(new NearExitParkingStrategy(), inpArg[2]);
                                 break;
                             case "Default":
-                                entrance.setParkingStrategy(new DefaultParkingStrategy());
+                                entrance.setParkingPreferences(new DefaultParkingStrategy(), inpArg[2]);
                                 break;
                             default:
                                 throw new IllegalArgumentException("parkingStrategy is not provided");

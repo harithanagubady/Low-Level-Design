@@ -2,6 +2,7 @@ package com.lowleveldesign.parkinglot.model.parking;
 
 import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.InvalidInputException;
+import com.lowleveldesign.parkinglot.model.enums.ParkingTicketStatus;
 import com.lowleveldesign.parkinglot.model.factory.CostCalculationFactory;
 import com.lowleveldesign.parkinglot.model.enums.VehicleType;
 import com.lowleveldesign.parkinglot.model.payment.CashPaymentStrategy;
@@ -13,13 +14,13 @@ import java.time.LocalDateTime;
 @Getter
 public class Exit {
 
-    String exitNumber;
+    private final String exitNo;
     PricingStrategy pricingStrategy;
     PaymentStrategy paymentStrategy;
     CostCalculation costCalculation;
 
-    public Exit(String exitNumber) {
-        this.exitNumber = exitNumber;
+    public Exit(String exitNo) {
+        this.exitNo = exitNo;
         this.pricingStrategy = new HourlyPricingStrategy();
         this.paymentStrategy = new CashPaymentStrategy();
     }
@@ -48,13 +49,7 @@ public class Exit {
         ParkingSpot parkingSpot = ticket.getParkingSpot();
         ParkingLot.getInstance().vacateParkingSpot(parkingSpot);
         ticket.setParkingSpot(parkingSpot);
-        ticket.closeTicket();
-    }
-
-    @Override
-    public String toString() {
-        return "\t\tExit: {" +
-                "exitNumber='" + exitNumber + '\'' +
-                '}';
+        ticket.setParkingTicketStatus(ParkingTicketStatus.PAID);
+        ticket.setExitNo(exitNo);
     }
 }

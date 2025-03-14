@@ -17,9 +17,9 @@ public class ParkingLevel {
     private final String parkingLevelId;
 
     @Getter
-    private final Map<ParkingSpotType, DoublyLinkedList<ParkingSpot>> availableParkingSpots;
+    private final Map<ParkingSpotType, Set<ParkingSpot>> availableParkingSpots;
 
-    private final Map<String, DoublyLinkedList.DLLNode<ParkingSpot>> allParkingSpotsById;
+    private final Map<String, ParkingSpot> allParkingSpots;
 
     //1, ParkingSpot1
     //2, ParkingSpot2
@@ -29,27 +29,61 @@ public class ParkingLevel {
     //id, parkingspot
 
     private final int capacity;
+    private final int totalSpots;
 
     private int noOfSlotsAvailable;
 
     public ParkingLevel(int capacity) {
         this.capacity = capacity;
+        this.totalSpots = 0;
         this.parkingLevelId = UUID.randomUUID().toString();
-        this.allParkingSpotsById = new HashMap<>();
         this.availableParkingSpots = new HashMap<>();
+        allParkingSpots = new HashMap<>();
     }
 
 
     public void addParkingSpot(ParkingSpot parkingSpot) {
-        if (allParkingSpotsById.size() >= this.capacity) {
+        if (totalSpots >= this.capacity) {
             throw new IllegalStateException("Cannot add new spot. Parking lot is at full capacity");
         }
         validateObject(parkingSpot);
         parkingSpot.setParkingLevel(this);
-        availableParkingSpots.putIfAbsent(parkingSpot.getParkingSpotType(), new DoublyLinkedList<>());
-        DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotNode = availableParkingSpots.get(parkingSpot.getParkingSpotType()).insert(parkingSpot);
-        allParkingSpotsById.put(parkingSpot.getSpotNumber(), parkingSpotNode);
+        availableParkingSpots.putIfAbsent(parkingSpot.getParkingSpotType(), new HashSet<>());
+        boolean added = availableParkingSpots.get(parkingSpot.getParkingSpotType()).add(parkingSpot);
+        if (!added) throw new IllegalStateException("Parking Spot not added " + parkingSpot.getSpotNumber());
+        allocateParkingSpotsToLocationType(parkingSpot);
+        allParkingSpots.put(parkingSpot.getSpotNumber(), parkingSpot);
         noOfSlotsAvailable++;
+    }
+
+    private void allocateParkingSpotsToLocationType(ParkingSpot parkingSpot) {
+        int[] distanceToNearestLift = parkingSpot.getDistanceToNearestLift();
+        int[] distanceToNearestEntrance = parkingSpot.getDistanceToNearestEntrance();
+        int[] distanceToNearestExit = parkingSpot.getDistanceToNearestExit();
+        fillSpots(parkingSpot, distanceToNearestLift, distanceToNearestEntrance, distanceToNearestExit);
+    }
+
+    private void fillSpots(ParkingSpot parkingSpot, int[] distanceToNearestLift, int[] distanceToNearestEntrance,
+                           int[] distanceToNearestExit) {
+
+        ParkingLot parkingLotObj = ParkingLot.getInstance();
+        String nearestLift = String.valueOf(distanceToNearestLift[0]);
+        PriorityQueue<ParkingSpot> pq = parkingLotObj.getLiftSpots().getOrDefault(nearestLift,
+                new PriorityQueue<>(Comparator.comparingInt(a -> a.getDistanceToNearestLift()[1])));
+        pq.add(parkingSpot);
+        parkingLotObj.getLiftSpots().put(nearestLift, pq);
+
+        String nearestEntrance = String.valueOf(distanceToNearestEntrance[0]);
+        pq = parkingLotObj.getEntranceSpots().getOrDefault(nearestEntrance,
+                new PriorityQueue<>(Comparator.comparingInt(a -> a.getDistanceToNearestEntrance()[1])));
+        pq.add(parkingSpot);
+        parkingLotObj.getEntranceSpots().put(nearestEntrance, pq);
+
+        String nearestExit = String.valueOf(distanceToNearestExit[0]);
+        pq = parkingLotObj.getExitSpots().getOrDefault(nearestExit,
+                new PriorityQueue<>(Comparator.comparingInt(a -> a.getDistanceToNearestExit()[1])));
+        pq.add(parkingSpot);
+        parkingLotObj.getExitSpots().put(nearestExit, pq);
     }
 
     private void validateObject(ParkingSpot parkingSpot) {
@@ -60,33 +94,35 @@ public class ParkingLevel {
     }
 
     public void removeParkingSpot(String spotId) {
-        DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotNode = allParkingSpotsById.remove(spotId);
-        if (parkingSpotNode == null) {
+        ParkingSpot parkingSpot = allParkingSpots.remove(spotId);
+        if (parkingSpot == null) {
             String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, PARKING_SPOT, PARKING_SPOT_CANNOT_BE_NULL);
             throw new InvalidInputException(msg);
         }
-        availableParkingSpots.get(parkingSpotNode.parkingSpot.getParkingSpotType()).remove(parkingSpotNode);
+        availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpot);
         noOfSlotsAvailable++;
     }
 
-    public DoublyLinkedList.DLLNode<ParkingSpot> getParkingSpotById(String spotId) {
+    public ParkingSpot getParkingSpotById(String spotId) {
         if (spotId == null) {
             String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "spotId", "spot Id cannot be null");
             throw new InvalidInputException(msg);
         }
-        return allParkingSpotsById.get(spotId);
+        return allParkingSpots.get(spotId);
     }
 
     public boolean canPark(VehicleType vehicleType) {
         int parkingSpotsForVehicleAvailable = availableParkingSpots.get(vehicleType.getSuitableSpotType()) == null ? 0 :
-                availableParkingSpots.get(vehicleType.getSuitableSpotType()).size;
+                availableParkingSpots.get(vehicleType.getSuitableSpotType()).size();
         return parkingSpotsForVehicleAvailable > 0;
     }
 
-    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
+    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingPreferences preferences) {
 
         List<ParkingSpot> availableSpots = getAvailableParkingSpotsByVehicleType(vehicle.getVehicleType());
-        ParkingSpot parkingSpot = parkingStrategy.allocateParkingSpot(availableSpots);
+
+        ParkingSpot parkingSpot = preferences.getParkingStrategy().allocateParkingSpot(availableSpots, preferences.getNum());
+
         if (parkingSpot == null) {
             throw new ParkingSpotUnavailableException("The requested parking spot is unavailable");
         }
@@ -101,8 +137,7 @@ public class ParkingLevel {
 
     protected List<ParkingSpot> getAvailableParkingSpotsByVehicleType(VehicleType vehicleType) {
 
-        DoublyLinkedList<ParkingSpot> parkingSpots = getAvailableParkingSpots()
-                .get(vehicleType.getSuitableSpotType());
+        Set<ParkingSpot> parkingSpots = getAvailableParkingSpots().get(vehicleType.getSuitableSpotType());
         List<ParkingSpot> finalList = new ArrayList<>();
         for (ParkingSpot spot : parkingSpots) {
             if (spot.isAvailable()) finalList.add(spot);
@@ -111,12 +146,11 @@ public class ParkingLevel {
     }
 
     protected void makeSpotUnavailable(ParkingSpot parkingSpot) {
-        DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotDLLNode = getParkingSpotById(parkingSpot.getSpotNumber());
-        availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpotDLLNode);
+        availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpot);
     }
 
     protected void makeSpotAvailable(ParkingSpot parkingSpot) {
-        availableParkingSpots.get(parkingSpot.getParkingSpotType()).insert(parkingSpot);
+        availableParkingSpots.get(parkingSpot.getParkingSpotType()).add(parkingSpot);
     }
 
     public boolean isAvailable() {
@@ -127,91 +161,7 @@ public class ParkingLevel {
     public String toString() {
         return "ParkingLevel: {" +
                 "\n\tparkingLevelId='" + parkingLevelId + '\'' +
-                ",\n\tparkingSpots=" + allParkingSpotsById.values() +
+                ",\n\tparkingSpots=" + allParkingSpots.values() +
                 "\n}";
-    }
-}
-
-class DoublyLinkedList<ParkingSpot> implements Iterable<ParkingSpot> {
-
-    DLLNode<ParkingSpot> head;
-    DLLNode<ParkingSpot> tail;
-    int size;
-
-    public DoublyLinkedList() {
-        this.size = 0;
-    }
-
-    @Override
-    public Iterator<ParkingSpot> iterator() {
-        return new DoublyLinkedListIterator();
-    }
-
-    class DoublyLinkedListIterator implements Iterator<ParkingSpot> {
-
-        DLLNode<ParkingSpot> current = head;
-
-        @Override
-        public boolean hasNext() {
-            return current != null;
-        }
-
-        @Override
-        public ParkingSpot next() {
-            ParkingSpot data = current.parkingSpot;
-            current = current.next;
-            return data;
-        }
-    }
-
-    static class DLLNode<ParkingSpot> {
-        DLLNode<ParkingSpot> prev;
-        DLLNode<ParkingSpot> next;
-        ParkingSpot parkingSpot;
-
-        public DLLNode(ParkingSpot parkingSpot) {
-            this.parkingSpot = parkingSpot;
-        }
-
-        @Override
-        public String toString() {
-            return this.parkingSpot.toString();
-        }
-    }
-
-    DLLNode<ParkingSpot> insert(ParkingSpot parkingSpot) {
-        DLLNode<ParkingSpot> newNode = new DLLNode<>(parkingSpot);
-        if (head == null) {
-            head = newNode;
-            tail = newNode;
-            size++;
-            return newNode;
-        }
-        newNode.prev = tail;
-        tail.next = newNode;
-        tail = tail.next;
-        size++;
-        return newNode;
-    }
-
-    void remove(DLLNode<ParkingSpot> node) {
-        if (node == null) return;
-        if (node == head) {
-            if (size == 1) {
-                head = null;
-                tail = null;
-            } else {
-                node.next.prev = node.prev;
-                head = node.next;
-                node.next = null;
-            }
-            size--;
-            return;
-        }
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
-        node.next = null;
-        node.prev = null;
-        size--;
     }
 }

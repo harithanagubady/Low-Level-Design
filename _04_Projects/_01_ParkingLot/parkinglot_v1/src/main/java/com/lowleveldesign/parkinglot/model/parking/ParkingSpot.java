@@ -6,6 +6,8 @@ import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 @Getter
 @Setter
 public abstract class ParkingSpot {
@@ -13,20 +15,19 @@ public abstract class ParkingSpot {
     private boolean available = true;
 
     private ParkingSpotType parkingSpotType;
-    private LocationType locationType;
+    private int[] distanceToNearestEntrance;
+    private int[] distanceToNearestLift;
+    private int[] distanceToNearestExit;
     private Vehicle vehicle;
     private ParkingLevel parkingLevel;
 
-    public ParkingSpot(String spotNumber, ParkingSpotType parkingSpotType) {
+    public ParkingSpot(String spotNumber, ParkingSpotType parkingSpotType, int[] distanceToNearestEntrance,
+                       int[] distanceToNearestExit, int[] distanceToNearestLift) {
         this.spotNumber = spotNumber;
         this.parkingSpotType = parkingSpotType;
-        this.locationType = LocationType.DEFAULT;
-    }
-
-    public ParkingSpot(String spotNumber, ParkingSpotType parkingSpotType, LocationType locationType) {
-        this.spotNumber = spotNumber;
-        this.parkingSpotType = parkingSpotType;
-        this.locationType = locationType;
+        this.distanceToNearestEntrance = distanceToNearestEntrance;
+        this.distanceToNearestLift = distanceToNearestLift;
+        this.distanceToNearestExit = distanceToNearestExit;
     }
 
     public void assignParkingSpot(Vehicle vehicle) {
@@ -46,7 +47,9 @@ public abstract class ParkingSpot {
                 "spotNumber='" + spotNumber + '\'' +
                 ", \tavailable=" + available +
                 ", \tparkingSpotType=" + parkingSpotType.name() +
-                ", \tlocationType=" + locationType.name() +
+                ", \tnearestLift=" + Arrays.toString(distanceToNearestLift) +
+                ", \tnearestEntranceAt=" + Arrays.toString(distanceToNearestEntrance) +
+                ", \tnearestExitAt=" + Arrays.toString(distanceToNearestExit) +
                 ", \tvehicle=" + vehicle +
                 "}";
     }

@@ -4,5 +4,5 @@ public enum LocationType {
 
     NEAR_ENTRANCE,
     NEAR_LIFT,
-    DEFAULT;
+    NEAR_EXIT;
 }

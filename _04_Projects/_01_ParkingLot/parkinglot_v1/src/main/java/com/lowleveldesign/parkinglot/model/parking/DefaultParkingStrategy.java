@@ -6,9 +6,7 @@ import java.util.List;
 
 public class DefaultParkingStrategy implements ParkingStrategy {
     @Override
-    public ParkingSpot allocateParkingSpot(List<ParkingSpot> parkingSpots) {
-        //Prioritise DEFAULT locations or else return entrance or exit spots
-        return parkingSpots.stream().filter(ps -> ps.getLocationType().equals(LocationType.DEFAULT))
-                .findFirst().or(() -> parkingSpots.stream().findFirst()).orElse(null);
+    public ParkingSpot allocateParkingSpot(List<ParkingSpot> parkingSpots, String num) {
+        return parkingSpots.stream().findFirst().orElse(null);
     }
 }

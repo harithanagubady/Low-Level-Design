@@ -5,11 +5,9 @@ import com.lowleveldesign.parkinglot.model.enums.ParkingSpotType;
 
 public class CarParkingSpot extends ParkingSpot {
 
-    public CarParkingSpot(String parkingSpotNo) {
-        super(parkingSpotNo, ParkingSpotType.CAR);
+    public CarParkingSpot(String parkingSpotNo, int[] distanceToNearestEntrance,
+                          int[] distanceToNearestExit, int[] distanceToNearestLift) {
+        super(parkingSpotNo, ParkingSpotType.CAR, distanceToNearestEntrance, distanceToNearestExit, distanceToNearestLift);
     }
 
-    public CarParkingSpot(String parkingSpotNo, LocationType locationType) {
-        super(parkingSpotNo, ParkingSpotType.CAR, locationType);
-    }
 }
