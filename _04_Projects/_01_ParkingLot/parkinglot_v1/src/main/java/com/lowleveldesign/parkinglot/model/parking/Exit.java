@@ -46,7 +46,7 @@ public class Exit {
         ticket.setAmount(amount);
         paymentStrategy.processPayment(amount);
         ParkingSpot parkingSpot = ticket.getParkingSpot();
-        parkingSpot.vacateParkingSpot();
+        ParkingLot.getInstance().vacateParkingSpot(parkingSpot);
         ticket.setParkingSpot(parkingSpot);
         ticket.closeTicket();
     }
