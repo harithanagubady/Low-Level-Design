@@ -36,11 +36,11 @@ public class ParkingLotApplication {
 
 
         ParkingLevel parkingLevel2 = new ParkingLevel(10);
+        parkingLot.addParkingLevel(parkingLevel2);
         ParkingSpot motorBikeParkingSpot1 = new MotorBikeParkingSpot("MotorBikeSpot1");
         ParkingSpot motorBikeParkingSpot2 = new MotorBikeParkingSpot("MotorBikeSpot2");
-        parkingLevel2.addParkingSpot(motorBikeParkingSpot1);
-        parkingLevel2.addParkingSpot(motorBikeParkingSpot2);
-        parkingLot.addParkingLevel(parkingLevel2);
+        parkingLot.addParkingSpot(motorBikeParkingSpot1, parkingLevel2);
+        parkingLot.addParkingSpot(motorBikeParkingSpot2, parkingLevel2);
 
         Entrance entrance = new Entrance("E1");
         parkingLot.addEntrance(entrance);
@@ -64,11 +64,11 @@ public class ParkingLotApplication {
         issueTicket truck1
         setParkingStrategy NearEntrance
         issueTicket truck2
-        issueTicket car1//Full
-        scanAndVacate e03492b0-af64-4637-ad51-b5d4352ed451
+        issueTicket car3//Full
+        scanAndVacate bfaeef78-a762-46f2-bd9e-cabb3ded57de
         setPricingStrategy PerMinute
         setPaymentStrategy CreditCard
-        scanAndVacate 1dce98f6-25cd-4756-bd2b-3328eb93a8fb
+        scanAndVacate 6a4f859f-b40f-4ad4-96a1-8e8f4ded7d06
          */
         while (true) {
             String input = scn.nextLine();

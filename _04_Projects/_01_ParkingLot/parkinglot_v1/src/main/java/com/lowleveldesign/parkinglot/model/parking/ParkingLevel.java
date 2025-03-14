@@ -2,6 +2,7 @@ package com.lowleveldesign.parkinglot.model.parking;
 
 import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.InvalidInputException;
+import com.lowleveldesign.parkinglot.exception.ParkingSpotUnavailableException;
 import com.lowleveldesign.parkinglot.model.enums.ParkingSpotType;
 import com.lowleveldesign.parkinglot.model.enums.VehicleType;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
@@ -44,6 +45,7 @@ public class ParkingLevel {
             throw new IllegalStateException("Cannot add new spot. Parking lot is at full capacity");
         }
         validateObject(parkingSpot);
+        parkingSpot.setParkingLevel(this);
         availableParkingSpots.putIfAbsent(parkingSpot.getParkingSpotType(), new DoublyLinkedList<>());
         DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotNode = availableParkingSpots.get(parkingSpot.getParkingSpotType()).insert(parkingSpot);
         allParkingSpotsById.put(parkingSpot.getSpotNumber(), parkingSpotNode);
@@ -67,7 +69,7 @@ public class ParkingLevel {
         noOfSlotsAvailable++;
     }
 
-    public DoublyLinkedList.DLLNode<ParkingSpot> getAllParkingSpotsById(String spotId) {
+    public DoublyLinkedList.DLLNode<ParkingSpot> getParkingSpotById(String spotId) {
         if (spotId == null) {
             String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "spotId", "spot Id cannot be null");
             throw new InvalidInputException(msg);
@@ -75,7 +77,29 @@ public class ParkingLevel {
         return allParkingSpotsById.get(spotId);
     }
 
-    public List<ParkingSpot> getParkingSpotByVehicleTypeAndAvailability(VehicleType vehicleType) {
+    public boolean canPark(VehicleType vehicleType) {
+        int parkingSpotsForVehicleAvailable = availableParkingSpots.get(vehicleType.getSuitableSpotType()) == null ? 0 :
+                availableParkingSpots.get(vehicleType.getSuitableSpotType()).size;
+        return parkingSpotsForVehicleAvailable > 0;
+    }
+
+    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
+
+        List<ParkingSpot> availableSpots = getAvailableParkingSpotsByVehicleType(vehicle.getVehicleType());
+        ParkingSpot parkingSpot = parkingStrategy.allocateParkingSpot(availableSpots);
+        if (parkingSpot == null) {
+            throw new ParkingSpotUnavailableException("The requested parking spot is unavailable");
+        }
+        parkingSpot.assignParkingSpot(vehicle);
+        makeSpotUnavailable(parkingSpot);
+        return parkingSpot;
+    }
+
+    public void vacateParkingSpot(ParkingSpot parkingSpot) {
+        makeSpotAvailable(parkingSpot);
+    }
+
+    protected List<ParkingSpot> getAvailableParkingSpotsByVehicleType(VehicleType vehicleType) {
 
         DoublyLinkedList<ParkingSpot> parkingSpots = getAvailableParkingSpots()
                 .get(vehicleType.getSuitableSpotType());
@@ -86,24 +110,13 @@ public class ParkingLevel {
         return finalList;
     }
 
-    public boolean canPark(VehicleType vehicleType) {
-        int parkingSpotsForVehicleAvailable = availableParkingSpots.get(vehicleType.getSuitableSpotType()) == null ? 0 :
-                availableParkingSpots.get(vehicleType.getSuitableSpotType()).size;
-        return parkingSpotsForVehicleAvailable > 0;
-    }
-
-    protected ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
-
-        ParkingSpot parkingSpot = parkingStrategy.allocateParkingSpot(getParkingSpotByVehicleTypeAndAvailability(vehicle.getVehicleType()));
-        if (parkingSpot == null) return null;
-        parkingSpot.assignParkingSpot(vehicle);
-        makeSpotUnavailable(parkingSpot);
-        return parkingSpot;
-    }
-
-    private void makeSpotUnavailable(ParkingSpot parkingSpot) {
-        DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotDLLNode = getAllParkingSpotsById(parkingSpot.getSpotNumber());
+    protected void makeSpotUnavailable(ParkingSpot parkingSpot) {
+        DoublyLinkedList.DLLNode<ParkingSpot> parkingSpotDLLNode = getParkingSpotById(parkingSpot.getSpotNumber());
         availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpotDLLNode);
+    }
+
+    protected void makeSpotAvailable(ParkingSpot parkingSpot) {
+        availableParkingSpots.get(parkingSpot.getParkingSpotType()).insert(parkingSpot);
     }
 
     public boolean isAvailable() {

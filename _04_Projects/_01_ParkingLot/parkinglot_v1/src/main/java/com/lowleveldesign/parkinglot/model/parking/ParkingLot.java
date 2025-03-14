@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class ParkingLot {
 
-    private static final int CAPACITY = 4;
+    private static final int LEVELS = 4;
     private static ParkingLot INSTANCE;
     private String parkingLotId;
     @Getter private final List<ParkingLevel> parkingLevels;
@@ -26,27 +26,22 @@ public class ParkingLot {
 
     private final List<Entrance> entrances;
     private final List<Exit> exits;
-    private final int noOfLevels;
 
-    private ParkingLot(int noOfLevels) {
+    private ParkingLot() {
         this.parkingLotId = UUID.randomUUID().toString();
         this.parkingLevels = new ArrayList<>();
         this.entrances = new ArrayList<>();
         this.exits = new ArrayList<>();
-        this.noOfLevels = noOfLevels;
     }
 
     public static ParkingLot getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ParkingLot(CAPACITY);
+            INSTANCE = new ParkingLot();
         }
         return INSTANCE;
     }
 
     public void addParkingSpot(ParkingSpot parkingSpot, ParkingLevel parkingLevel) {
-        if (parkingLevels.size() >= this.noOfLevels) {
-            throw new IllegalStateException("Cannot add new spot. Parking lot is at full capacity");
-        }
         if (parkingLevel == null) {
             String msg = String.format(ErrorConstants.INVALID_INPUT_MSG, "parkingLevel", "parkingLevel object cannot be null");
             throw new InvalidInputException(msg);
@@ -54,7 +49,7 @@ public class ParkingLot {
         parkingLevel.addParkingSpot(parkingSpot);
     }
 
-    protected ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
+    public ParkingSpot assignParkingSpot(Vehicle vehicle, ParkingStrategy parkingStrategy) {
 
         Optional<ParkingSpot> parkingSpotOptional = parkingLevels.stream()
                 .filter(pl -> pl.canPark(vehicle.getVehicleType()))
@@ -65,7 +60,7 @@ public class ParkingLot {
     }
 
     public void addParkingLevel(ParkingLevel parkingLevel) {
-        if (parkingLevels.size() >= this.noOfLevels) {
+        if (parkingLevels.size() >= this.LEVELS) {
             throw new IllegalStateException("Cannot add new level. Parking lot is at full capacity");
         }
         if (parkingLevel == null) {
@@ -75,7 +70,7 @@ public class ParkingLot {
         parkingLevels.add(parkingLevel);
     }
 
-    protected void vacateParkingSpot(ParkingSpot parkingSpot) {
+    public void vacateParkingSpot(ParkingSpot parkingSpot) {
         parkingSpot.vacateParkingSpot();
     }
 

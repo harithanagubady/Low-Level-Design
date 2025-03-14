@@ -37,6 +37,7 @@ public abstract class ParkingSpot {
     public void vacateParkingSpot() {
         this.vehicle = null;
         setAvailable(true);
+        parkingLevel.vacateParkingSpot(this);
     }
 
     @Override

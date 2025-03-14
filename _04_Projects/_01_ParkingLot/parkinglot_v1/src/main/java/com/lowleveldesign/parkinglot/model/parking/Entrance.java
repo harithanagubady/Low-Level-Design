@@ -3,6 +3,7 @@ package com.lowleveldesign.parkinglot.model.parking;
 import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.ParkingLotFullException;
 import com.lowleveldesign.parkinglot.exception.ParkingLotUnavailableException;
+import com.lowleveldesign.parkinglot.exception.ParkingSpotUnavailableException;
 import com.lowleveldesign.parkinglot.model.enums.ParkingTicketStatus;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Getter;
@@ -31,9 +32,7 @@ public class Entrance {
         }
         ParkingSpot parkingSpot = ParkingLot.getInstance().assignParkingSpot(vehicle, parkingStrategy);
         if (parkingSpot == null) {
-            String msg = String.format(ErrorConstants.PARKING_SPOT_UNAVAILABLE_MSG,
-                    vehicle.getVehicleType().name());
-            throw new ParkingLotUnavailableException(msg);
+            throw new ParkingSpotUnavailableException("Parking Spot for " + vehicle.getVehicleType() + " is unavailable");
         }
         ParkingTicket ticket = buildParkingTicket(parkingSpot, vehicle);
         System.out.println(ticket);
