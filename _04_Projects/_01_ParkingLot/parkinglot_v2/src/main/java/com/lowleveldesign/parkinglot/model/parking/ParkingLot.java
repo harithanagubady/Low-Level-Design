@@ -2,6 +2,8 @@ package com.lowleveldesign.parkinglot.model.parking;
 
 import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.InvalidInputException;
+import com.lowleveldesign.parkinglot.model.display.DisplayBoard;
+import com.lowleveldesign.parkinglot.model.enums.ParkingSpotType;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
 import lombok.Getter;
 
@@ -17,6 +19,7 @@ public class ParkingLot {
     @Getter private final Map<String, PriorityQueue<ParkingSpot>> exitSpots;
     @Getter private final Map<String, PriorityQueue<ParkingSpot>> liftSpots;
 
+    public DisplayBoard mainDisplay;
 
     public String getParkingLotId() {
         return parkingLotId;
@@ -39,6 +42,7 @@ public class ParkingLot {
         this.entranceSpots = new HashMap<>();
         this.exitSpots = new HashMap<>();
         this.liftSpots = new HashMap<>();
+        mainDisplay = new DisplayBoard(0);
     }
 
     public static ParkingLot getInstance() {
@@ -122,4 +126,9 @@ public class ParkingLot {
                 "\n}";
     }
 
+    public void updateMainDisplay(ParkingSpotType parkingSpotType, int sizeToBeAdded) {
+        HashMap<ParkingSpotType, Integer> availableSpots = mainDisplay.getAvailableSpots();
+        availableSpots.put(parkingSpotType, availableSpots.getOrDefault(parkingSpotType, 0) + sizeToBeAdded);
+        mainDisplay.update(availableSpots);
+    }
 }

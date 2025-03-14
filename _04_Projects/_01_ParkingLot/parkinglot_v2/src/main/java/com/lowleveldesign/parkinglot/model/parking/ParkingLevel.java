@@ -3,6 +3,7 @@ package com.lowleveldesign.parkinglot.model.parking;
 import com.lowleveldesign.parkinglot.exception.ErrorConstants;
 import com.lowleveldesign.parkinglot.exception.InvalidInputException;
 import com.lowleveldesign.parkinglot.exception.ParkingSpotUnavailableException;
+import com.lowleveldesign.parkinglot.model.display.DisplayBoard;
 import com.lowleveldesign.parkinglot.model.enums.ParkingSpotType;
 import com.lowleveldesign.parkinglot.model.enums.VehicleType;
 import com.lowleveldesign.parkinglot.model.vehicle.Vehicle;
@@ -14,8 +15,8 @@ public class ParkingLevel {
 
     public static final String PARKING_SPOT_CANNOT_BE_NULL = "Parking Spot cannot be null";
     public static final String PARKING_SPOT = "parkingSpot";
-    private final String parkingLevelId;
-
+    private final int parkingLevel;
+    private DisplayBoard displayBoard;
     @Getter
     private final Map<ParkingSpotType, Set<ParkingSpot>> availableParkingSpots;
 
@@ -33,14 +34,22 @@ public class ParkingLevel {
 
     private int noOfSlotsAvailable;
 
-    public ParkingLevel(int capacity) {
+    public ParkingLevel(int capacity, int level) {
         this.capacity = capacity;
         this.totalSpots = 0;
-        this.parkingLevelId = UUID.randomUUID().toString();
+        this.parkingLevel = level;
         this.availableParkingSpots = new HashMap<>();
         allParkingSpots = new HashMap<>();
+        this.displayBoard = new DisplayBoard(parkingLevel);
     }
 
+    protected void updateDisplayBoard(ParkingSpotType parkingSpotType, int size) {
+        HashMap<ParkingSpotType, Integer> availableSpotsCount = displayBoard.getAvailableSpots();
+        int oldSize = availableSpotsCount.getOrDefault(parkingSpotType, 0);
+        availableSpotsCount.put(parkingSpotType, size);
+        displayBoard.update(availableSpotsCount);
+        ParkingLot.getInstance().updateMainDisplay(parkingSpotType, size - oldSize);
+    }
 
     public void addParkingSpot(ParkingSpot parkingSpot) {
         if (totalSpots >= this.capacity) {
@@ -53,6 +62,8 @@ public class ParkingLevel {
         if (!added) throw new IllegalStateException("Parking Spot not added " + parkingSpot.getSpotNumber());
         allocateParkingSpotsToLocationType(parkingSpot);
         allParkingSpots.put(parkingSpot.getSpotNumber(), parkingSpot);
+        updateDisplayBoard(parkingSpot.getParkingSpotType(),
+                availableParkingSpots.get(parkingSpot.getParkingSpotType()).size());
         noOfSlotsAvailable++;
     }
 
@@ -100,6 +111,8 @@ public class ParkingLevel {
             throw new InvalidInputException(msg);
         }
         availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpot);
+        updateDisplayBoard(parkingSpot.getParkingSpotType(),
+                availableParkingSpots.get(parkingSpot.getParkingSpotType()).size());
         noOfSlotsAvailable++;
     }
 
@@ -147,10 +160,14 @@ public class ParkingLevel {
 
     protected void makeSpotUnavailable(ParkingSpot parkingSpot) {
         availableParkingSpots.get(parkingSpot.getParkingSpotType()).remove(parkingSpot);
+        updateDisplayBoard(parkingSpot.getParkingSpotType(),
+                availableParkingSpots.get(parkingSpot.getParkingSpotType()).size());
     }
 
     protected void makeSpotAvailable(ParkingSpot parkingSpot) {
         availableParkingSpots.get(parkingSpot.getParkingSpotType()).add(parkingSpot);
+        updateDisplayBoard(parkingSpot.getParkingSpotType(),
+                availableParkingSpots.get(parkingSpot.getParkingSpotType()).size());
     }
 
     public boolean isAvailable() {
@@ -160,7 +177,7 @@ public class ParkingLevel {
     @Override
     public String toString() {
         return "ParkingLevel: {" +
-                "\n\tparkingLevelId='" + parkingLevelId + '\'' +
+                "\n\tparkingLevelId='" + parkingLevel + '\'' +
                 ",\n\tparkingSpots=" + allParkingSpots.values() +
                 "\n}";
     }

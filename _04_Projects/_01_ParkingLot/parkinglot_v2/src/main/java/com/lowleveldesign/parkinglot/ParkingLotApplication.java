@@ -19,7 +19,7 @@ public class ParkingLotApplication {
         Scanner scn = new Scanner(System.in);
 
         ParkingLot parkingLot = ParkingLot.getInstance();
-        ParkingLevel parkingLevel1 = new ParkingLevel(10);
+        ParkingLevel parkingLevel1 = new ParkingLevel(10, 1);
         parkingLot.addParkingLevel(parkingLevel1);
 
         ParkingSpot carParkingSpot1 = new CarParkingSpot("CarSpot1", new int[]{11, 1}, new int[]{11, 2}, new int[]{12, 1});
@@ -32,7 +32,7 @@ public class ParkingLotApplication {
         parkingLot.addParkingSpot(largeParkingSpot1, parkingLevel1);
         parkingLot.addParkingSpot(largeParkingSpot2, parkingLevel1);
 
-        ParkingLevel parkingLevel2 = new ParkingLevel(10);
+        ParkingLevel parkingLevel2 = new ParkingLevel(10, 2);
         parkingLot.addParkingLevel(parkingLevel2);
         ParkingSpot motorBikeParkingSpot1 = new MotorBikeParkingSpot("MotorBikeSpot1", new int[]{21, 1}, new int[]{21, 1}, new int[]{22, 1});
         ParkingSpot motorBikeParkingSpot2 = new MotorBikeParkingSpot("MotorBikeSpot2", new int[]{21, 2}, new int[]{21, 2}, new int[]{21, 1});
@@ -68,7 +68,7 @@ public class ParkingLotApplication {
         setParkingStrategy NearEntrance 12
         issueTicket truck2
         issueTicket car3//Full
-        scanAndVacate 7d3f945d-722c-4549-9520-5231bf3171a4
+        scanAndVacate d12587d3-fc2a-4c88-a55a-a4d69a3714e2
         setPricingStrategy PerMinute
         setPaymentStrategy CreditCard
         scanAndVacate c528ee6d-3143-4899-a7c6-f9b6cd8803ab
