@@ -28,6 +28,6 @@ public class DisplayBoard {
 
     @Override
     public String toString() {
-        return "Display Board - level " + this.getLevel() + " : \n" + this.getAvailableSpots();
+        return "============DISPLAY BOARD==============" + "level " + this.getLevel() + " : \n" + this.getAvailableSpots();
     }
 }
