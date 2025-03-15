@@ -27,7 +27,7 @@ class ConsumerTest {
 
     @Test
     void testConsumerReceivesMessage() {
-        Message message = new Message(1, "Hello");
+        Message message = new Message(1, "Hello", System.currentTimeMillis());
         consumer.consume(1, message);
         verify(broker, times(1)).acknowledgeMessage(1, consumer, message);
     }

@@ -27,7 +27,7 @@ public class ProducerTest {
 
     @Test
     void testProducerPublishesMessage() {
-        Message message = new Message(1, "Hello World!");
+        Message message = new Message(1, "Hello World!", System.currentTimeMillis());
         producer.publish(1, message);
         verify(brokerMock, times(1)).publish(1, message);
     }

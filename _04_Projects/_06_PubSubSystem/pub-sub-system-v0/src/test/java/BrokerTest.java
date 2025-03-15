@@ -28,6 +28,7 @@ class BrokerTest {
         producer = new Producer(1, broker);
         consumer = new Consumer(1, broker);
         broker.createTopic(1, 10000);
+        broker.createTopic(2);
         broker.subscribe(1, consumer);
     }
 

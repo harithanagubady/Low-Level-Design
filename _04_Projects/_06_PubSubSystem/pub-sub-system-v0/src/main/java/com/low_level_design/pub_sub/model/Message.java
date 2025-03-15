@@ -12,10 +12,6 @@ public class Message {
         this.message = message;
         this.timestamp = timestamp;
     }
-
-    public Message(int i, String s) {
-    }
-
     public int getMessageId() {
         return messageId;
     }
