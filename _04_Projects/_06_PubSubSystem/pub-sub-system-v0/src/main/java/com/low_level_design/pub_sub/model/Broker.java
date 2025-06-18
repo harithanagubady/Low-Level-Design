@@ -58,6 +58,7 @@ public class Broker {
             throw new IllegalArgumentException("Topic " + topicId + " doesn't exist");
         }
     }
+
     public synchronized void acknowledgeMessage(int topicId, IConsumer consumer, Message message) {
         if (topics.containsKey(topicId)) {
             topics.get(topicId).acknowledgeMessage(consumer, message);
