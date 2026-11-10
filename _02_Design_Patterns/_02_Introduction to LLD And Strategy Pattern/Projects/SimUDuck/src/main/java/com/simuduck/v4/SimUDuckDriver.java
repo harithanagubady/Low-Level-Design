@@ -35,7 +35,7 @@ public class SimUDuckDriver {
         System.out.println("""
                 \n
                 * We have removed dynamic behaviors from concrete classes\s
-                * We delegated the dynamic behaviors to separate behavior classes FlyWithWings, Quack, Squeak,...\s
+                * We delegated the dynamic behaviors to separate behavior classes behavior.FlyWithWings, behavior.Quack, behavior.Squeak,...\s
                 * Existing as well as new duck classes can simply REUSE these behaviors\s
                 * We can add new behaviors without changing any existing classes\s
                 * We added reference variables of fly and quack interfaces, performQuack and performFly methods to

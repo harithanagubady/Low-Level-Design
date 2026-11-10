@@ -1,18 +1,18 @@
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-DEBUG [com.mylogger.Main] DEBUG: checking debug log
+DEBUG [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] DEBUG: checking debug log
 
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-DEBUG [com.mylogger.Main] DEBUG: checking debug log
+DEBUG [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] DEBUG: checking debug log
 
-ERROR [com.mylogger.Main] ERROR: checking error log
+ERROR [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] ERROR: checking error log
 
-DEBUG [com.mylogger.Main] DEBUG: checking debug log
+DEBUG [com.mylogger._01_Inheritance._02_Polymorphism._01_runtime_polymorphism.Main] DEBUG: checking debug log
 
